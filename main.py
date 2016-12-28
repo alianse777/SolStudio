@@ -37,6 +37,7 @@ class GUI():
         self.saved = [True]
         self.buff = [None]
         self.FILE = [None]
+        self.ident = 0
         self.connect()
         self.check_solc()
         self.new(None)
@@ -88,14 +89,14 @@ class GUI():
             os._exit(1)
         
     def exit(self, *argv):
-        if self.FILE[self.ws] and not self.saved[self.ws]:
-            if confirm(title="Unsaved file", text="Save file '" + self.FILE[self.ws] + "' before exit?"):
+        if not self.saved[self.ws]:
+            if confirm(title="Unsaved file", text="Save file before exit?"):
                 self.save(None)
         Gtk.main_quit()
         
     def new(self, obj):
         self.FILE[self.ws] = None
-        self.buff[self.ws].set_text("")
+        self.buff[self.ws].set_text("pragma solidity ^0.4.0;\n")
         self.win.set_title(self.prefix + " - Unsaved " + str(self.ws))
         
     def open(self, obj):
@@ -211,6 +212,23 @@ class GUI():
             self.save(None)
         if (key == 97 and key == 65) and ctrl:
             self.save_as(None)
+        if key == 40:
+            buff = self.buff[self.ws]
+            cur = buff.get_iter_at_mark(buff.get_insert()).get_offset()
+            buff.insert_at_cursor(")")
+            pos = buff.get_start_iter()
+            pos.set_offset(cur)
+            buff.place_cursor(pos)
+            
+        if key == 91:
+            self.ident += 1
+            buff = self.buff[self.ws]
+            cur = buff.get_iter_at_mark(buff.get_insert()).get_offset()
+            buff.insert_at_cursor("\n" + "    "*self.ident + "\n}")
+            pos = buff.get_start_iter()
+            pos.set_offset(cur + self.ident*4 + 1)
+            buff.place_cursor(pos)
+            self.ident = 0
         self.ctrl = e.state == (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD2_MASK)
 
 
