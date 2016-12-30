@@ -8,3 +8,21 @@ def get_tags(Buffer):
     (["block", "this"], "#48C066")
     ]
     return T
+
+def format(code):
+    data = code.split("\n")
+    ident = 0
+    tab = "    "
+    result = []
+    for line in data:
+        result.append(tab*ident + line)
+        if line:
+            if line[-1] == "{":
+                ident += 1
+            if line.strip()[0] == "}":
+                ident -= 1
+    return '\n'.join(result)
+
+if __name__ == "__main__":
+    with open("/root/contracts/test.sol", "r") as fl:
+        print (format(fl.read()))
