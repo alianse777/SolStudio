@@ -1,13 +1,13 @@
 import os
 import random
-import re
 import subprocess as sp
 from gi.repository import Gtk, Gdk
 from msgbox import *
 from solidity import *
 import tempfile
 
-GAS = 300000
+GAS = 300000 # Gas price
+PATH = os.path.dirname(os.path.realpath(__file__))
 
 def highlightText(buffer, searchStr, color, N):
     buffer.create_tag("syntax"+str(N), foreground=color)
@@ -32,7 +32,7 @@ class GUI():
         self.win.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("white"))
         self.win.show_all()
         self.prefix = "SolStudio"
-        self.ws = 0
+        self.ws = 0 # TODO: workspaces
         self.ctrl = False
         self.completion = True
         self.saved = [True]
@@ -41,15 +41,19 @@ class GUI():
         self.ident = 0
         self.connect()
         self.check_solc()
-        self.reopen()
+        self.reopen() # check for the last opened file
         Gtk.main()
 
     def reopen(self):
         try:
-            with open(".latest") as fl:
-                self.FILE[self.ws] = fl.readline().strip()
-            self.load()
-        except:
+            with open(PATH + "/.latest") as fl:
+                filename = fl.readline().strip()
+            if os.path.isfile(filename):
+                self.FILE[self.ws] = filename
+                self.load()
+            else:
+                self.new(None)
+        except OSError:
             self.new(None)
 
     def connect(self):
@@ -100,7 +104,7 @@ class GUI():
         
     def exit(self, *argv):
         if self.FILE[self.ws]:
-            with open(".latest", "w") as fl:
+            with open(PATH + "/.latest", "w") as fl:
                 fl.write(self.FILE[self.ws])
         if not self.saved[self.ws]:
             if confirm(title="Unsaved file", text="Save file before exit?"):
@@ -113,6 +117,7 @@ class GUI():
         self.win.set_title(self.prefix + " - Unsaved " + str(self.ws))
 
     def format(self, obj):
+        # format identation
         buff = self.buff[self.ws]
         text = format(buff.get_text(buff.get_start_iter(), buff.get_end_iter(), False))
         buff.set_text(text)
@@ -156,7 +161,7 @@ class GUI():
             self.save_as(None)
         
     def save_as(self, obj):
-        if 1:
+        if True: # will be implemented
             dialog = self.builder.get_object("save_as_dialog")
             destroy = lambda obj: dialog.hide()
             self.builder.get_object("button_save_as_cancel").connect("pressed", destroy)
@@ -180,6 +185,7 @@ class GUI():
             self.builder.get_object("button_save_as_ok").connect("pressed", save)
     
     def changed(self, obj):
+        # -- on file changed --
         self.apply_tags()
         self.saved[self.ws] = False
         if self.FILE[self.ws]:
