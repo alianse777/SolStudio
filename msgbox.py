@@ -12,7 +12,8 @@ def alert(parent = None, title="", text=""):
     btn.set_relief(2)
     box.show_all()
     dialog.run()
-    
+    dialog.destroy()
+
 def confirm(parent=None, title="", text=""):
     dialog = Gtk.Dialog(title, parent, 0)
 
@@ -29,6 +30,7 @@ def confirm(parent=None, title="", text=""):
     btn2.set_relief(2)
     result = False
     response = dialog.run()
+    dialog.destroy()
     if response == Gtk.ResponseType.OK:
         result = True
     elif response == Gtk.ResponseType.CANCEL:

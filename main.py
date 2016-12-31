@@ -34,15 +34,24 @@ class GUI():
         self.prefix = "SolStudio"
         self.ws = 0
         self.ctrl = False
+        self.completion = True
         self.saved = [True]
         self.buff = [None]
         self.FILE = [None]
         self.ident = 0
         self.connect()
         self.check_solc()
-        self.new(None)
+        self.reopen()
         Gtk.main()
-        
+
+    def reopen(self):
+        try:
+            with open(".latest") as fl:
+                self.FILE[self.ws] = fl.readline().strip()
+            self.load()
+        except:
+            self.new(None)
+
     def connect(self):
         # Connect function
         self.win.connect('key_release_event', self.on_key_pressed)
@@ -54,6 +63,7 @@ class GUI():
         self.builder.get_object("menu_file_exit").connect("activate", self.exit)
         
         #Edit menu
+        self.builder.get_object("menu_edit_format").connect("activate",self.format)
         self.builder.get_object("menu_edit_cut").connect("activate", self.cut)
         self.builder.get_object("menu_edit_copy").connect("activate", self.copy)
         self.builder.get_object("menu_edit_paste").connect("activate", self.paste)
@@ -85,10 +95,13 @@ class GUI():
             ver = sp.check_output(['solc', '--version']).split(b'\n')[1].split(b" ")[1]
             self.builder.get_object("solc_version").set_text(ver.decode())
         except FileNotFoundError:
-            alert(title="Error!", text="solc compiler not found!")
+            alert(parent=self.win, title="Error!", text="solc compiler not found!")
             os._exit(1)
         
     def exit(self, *argv):
+        if self.FILE[self.ws]:
+            with open(".latest", "w") as fl:
+                fl.write(self.FILE[self.ws])
         if not self.saved[self.ws]:
             if confirm(title="Unsaved file", text="Save file before exit?"):
                 self.save(None)
@@ -98,6 +111,11 @@ class GUI():
         self.FILE[self.ws] = None
         self.buff[self.ws].set_text("pragma solidity ^0.4.0;\n")
         self.win.set_title(self.prefix + " - Unsaved " + str(self.ws))
+
+    def format(self, obj):
+        buff = self.buff[self.ws]
+        text = format(buff.get_text(buff.get_start_iter(), buff.get_end_iter(), False))
+        buff.set_text(text)
         
     def open(self, obj):
         openfile = self.builder.get_object("open_file_dialog")
@@ -118,8 +136,9 @@ class GUI():
             with open(self.FILE[self.ws], "r") as fl:
                 data = fl.read()
             buf = self.buff[self.ws]
-            buf.insert(buf.get_start_iter(), data)
+            buf.set_text(data)
             self.saved[self.ws] = True
+            self.win.set_title(self.prefix + " - " + os.path.basename(self.FILE[self.ws]))
         except:
             alert(title="Error!", text="Cannot open file!")
             
@@ -132,7 +151,7 @@ class GUI():
                     self.saved[self.ws] = True
                     self.win.set_title(self.prefix + " - " + os.path.basename(self.FILE[self.ws]))
             except:
-                alert(title="Error!", text="Cannot save file!")
+                alert(parent=self.win, title="Error!", text="Cannot save file!")
         else:
             self.save_as(None)
         
@@ -149,8 +168,7 @@ class GUI():
                     allowed = True
                     if os.path.exists(filename):
                         allowed = confirm(text="Already exists. Do you want to overwrite?", 
-                            buttons=['OK','Cancel'], 
-                            title= 'Already exists'
+                            title= 'Already exists', parent=self.win
                         )
                     if allowed:
                         with open(filename, "w") as fl:
@@ -191,8 +209,8 @@ class GUI():
             
     def show_gas(self, obj):
         if self.FILE[self.ws]:
-            out = sp.check_output(["solc --gas " + self.FILE[self.ws]], shell=True)
-            alert(title="Gas info", text=out)
+            out = sp.check_output(["solc --gas " + self.FILE[self.ws]], shell=True).decode()
+            alert(title="Gas info", text=out, parent=self.win)
     
     def copy(self, obj):
         self.buff[self.ws].copy_clipboard(self.cb)
