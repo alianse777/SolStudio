@@ -1,3 +1,19 @@
+#    SolStudio
+#    Copyright (C) 2017  alainse777
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import os
 import random
 import subprocess as sp
@@ -230,13 +246,13 @@ class GUI():
     def on_key_pressed(self, win, e):
         key = e.keyval
         ctrl = self.ctrl
-        if (key == 111 or key == 79) and ctrl:
+        if chr(key).lower() == 'o' and ctrl:
             self.open(None)
-        if (key == 115 or key == 83) and ctrl:
+        if chr(key).lower() == 's' and ctrl:
             self.save(None)
-        if (key == 97 and key == 65) and ctrl:
+        if chr(key).lower() == 'a' and ctrl:
             self.save_as(None)
-        if key == 40:
+        if chr(key) == '(':
             buff = self.buff[self.ws]
             cur = buff.get_iter_at_mark(buff.get_insert()).get_offset()
             buff.insert_at_cursor(")")
@@ -244,7 +260,7 @@ class GUI():
             pos.set_offset(cur)
             buff.place_cursor(pos)
             
-        if key == 91:
+        if chr(key) == '{':
             self.ident += 1
             buff = self.buff[self.ws]
             cur = buff.get_iter_at_mark(buff.get_insert()).get_offset()
