@@ -284,7 +284,7 @@ def compile(filename, use_std=False, optimize=True):
     if not data[-1]:
         del data[-1]
     contractName = data[0].replace(b"=======", b"").strip().decode()
-    abi = data[1].decode()
+    abi = data[2].decode()
     cmd = "solc --bin -o " + path + " " + filename
     if use_std:
         cmd += " --add-std"

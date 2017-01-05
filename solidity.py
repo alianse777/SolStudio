@@ -32,15 +32,17 @@ def format(code):
     result = []
     if len(data) > 1:
         for line in data:
-            if line.strip() == "}" and ident > 0:
-                result.append(tab*(ident-1) + line.strip())
-            else:
-                result.append(tab*ident + line.strip())
-            if line:
+            if line.strip():
+                if line.strip() == "}" and ident > 0:
+                    result.append(tab*(ident-1) + line.strip())
+                else:
+                    result.append(tab*ident + line.strip())
                 if line[-1] == "{":
                     ident += 1
                 if line.strip()[0] == "}":
                     ident -= 1
+            else:
+                result.append(tab*ident)
     return '\n'.join(result)
 
 if __name__ == "__main__":
