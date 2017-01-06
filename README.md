@@ -39,3 +39,4 @@ Writen in Python 3 and GTK.
 - Intergration with Eth and Geth
 
 - ...
+ Tags: solidity, ide, editor, ethereum, solc
