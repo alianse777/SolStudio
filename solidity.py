@@ -18,9 +18,9 @@ def get_tags(Buffer):
     tag = Buffer.create_tag
     T = [
     (["uint ", "int ", "string ", "bool ",
-         "mapping", "struct ", "bytes",
-         "bytes32", "address"],"#0099FF"),
-    (["pragma ", "function ", "contract ", "return ", " constant ", " storage ", " memory ", " public","public ", " private", "private ", " protected", "protected "],"#0000FF"),
+         "mapping ", "struct ", "bytes ",
+         "bytes32 ", "address ", "var "],"#0099FF"),
+    (["pragma ", "function ", "contract ", "library ", "return ", "constant ", "public ", "private ", " storage ", " memory ", ],"#0000FF"),
     (["block.", "this."], "#48C066")
     ]
     return T
