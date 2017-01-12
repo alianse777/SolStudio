@@ -1,5 +1,5 @@
 # SolStudio
-Light & fast solidity development IDE.
+Light & fast solidity IDE.
 Writen in Python 3 and GTK.
 
 # Features
