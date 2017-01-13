@@ -20,7 +20,7 @@ def get_tags(Buffer):
     (["uint ", "int ", "string ", "bool ",
          "mapping ", "struct ", "bytes ",
          "bytes32 ", "address ", "var "],"#0099FF"),
-    (["pragma ", "function ", "contract ", "library ", "return ", "constant ", "public ", "private ", " storage ", " memory ", ],"#0000FF"),
+    (["pragma ", "function ", "contract ", "library ", "return ", "constant ", "public ", "private ", " storage ", " memory ", " internal", " payable", " external"],"#0000FF"),
     (["block.", "this."], "#48C066")
     ]
     return T
